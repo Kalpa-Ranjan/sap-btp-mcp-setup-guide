@@ -3,59 +3,48 @@
 [![SAP BTP](https://img.shields.io/badge/SAP%20BTP-Administration-008FD3?style=for-the-badge&logo=sap&logoColor=white)](https://help.sap.com)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-7057ff?style=for-the-badge&logo=json&logoColor=white)](https://modelcontextprotocol.io)
 [![Antigravity](https://img.shields.io/badge/Client-Antigravity--IDE-4285F4?style=for-the-badge)](https://cloud.google.com)
-[![Claude](https://img.shields.io/badge/Client-Claude%20Desktop%2FCode-D97706?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
+[![Claude](https://img.shields.io/badge/Client-Claude%20Desktop-D97706?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
 
-A comprehensive, security-first guide for configuring and connecting the **SAP BTP Administration MCP (Model Context Protocol) Server** with **Antigravity IDE**, **Claude Desktop App**, **Claude Code CLI**, and **Claude.ai Web Connectors**.
+A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using local configuration files for **Antigravity IDE** and **Claude Desktop App** — without requiring CLI commands or web connectors.
 
 ---
 
 ## 📌 Table of Contents
-- [📖 Overview](#-overview)
-- [🔑 Prerequisites & Authentication Modes](#-prerequisites--authentication-modes)
+- [📖 Architecture Overview](#-architecture-overview)
+- [🔑 Prerequisites & Authentication](#-prerequisites--authentication)
 - [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
-- [🤖 Setup Guide for Claude](#-setup-guide-for-claude)
-  - [Option A: Claude Desktop App (Recommended)](#option-a-claude-desktop-app-recommended)
-  - [Option B: Claude Code CLI (Single Sign-On)](#option-b-claude-code-cli-single-sign-on)
-  - [Option C: Claude.ai Web Connectors (Compatibility Notes)](#option-c-claudeai-web-connectors-compatibility-notes)
+- [🤖 Setup Guide for Claude Desktop App](#-setup-guide-for-claude-desktop-app)
 - [🛠️ Troubleshooting & Technical Notes](#%EF%B8%8F-troubleshooting--technical-notes)
 - [🔐 Security Best Practices](#-security-best-practices)
 
 ---
 
-## 📖 Overview
+## 📖 Architecture Overview
 
-The **MCP Server for SAP BTP Administration** allows AI agents and assistants to query, manage, and navigate your SAP Business Technology Platform (BTP) accounts using natural language.
+This configuration model operates **100% locally via GUI configuration files**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
 
-| Client / Interface | Support Status | Preferred Auth Mode | Transport Type |
-| :--- | :---: | :--- | :--- |
-| **Google Antigravity IDE** | 🟢 Fully Active | Direct Connection (Headers) | Native `streamableHttp` |
-| **Claude Desktop App** | 🟢 Fully Active | Direct Connection (Headers) | Native `streamableHttp` |
-| **Claude Code CLI** | 🟡 Optional | Single Sign-On (SSO) | HTTP (`claude mcp add`) |
-| **Claude.ai Web Connectors** | 🔴 Restricted | Direct Connection Only | Web Connectors GUI |
+| Client / Interface | Configuration File | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
+| :--- | :--- | :--- | :---: | :---: |
+| **Google Antigravity IDE** | `mcp_config.json` | Direct Connection | ❌ No | ❌ No |
+| **Claude Desktop App** | `claude_desktop_config.json` | Direct Connection | ❌ No | ❌ No |
 
 ---
 
-## 🔑 Prerequisites & Authentication Modes
+## 🔑 Prerequisites & Authentication
 
-Before starting, determine which authentication method applies to your SAP setup:
-
-### 1️⃣ Single Sign-On (SSO)
-* **When to use**: Your BTP platform user originates from default identity provider (`accounts.sap.com`).
-* **Endpoint URL**: `https://sso.mcp.btp.cloud.sap/mcp`
-* **Static OAuth Client ID**: `e789ba01-5612-47ee-bfe7-79e26411c1ca`
-
-### 2️⃣ Direct Connection
-* **When to use**: Your BTP user comes from a custom Identity Authentication Service (IAS) tenant.
+### Direct Connection Mode
 * **Endpoint URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
-* **Credentials Required**:
+* **Headers Required**:
   - `Authorization`: `Basic <Base64-encoded username:password>`
   - `X-Platform-Origin`: `<your-ias-tenant-subdomain>`
+  - `Accept`: `application/json, text/event-stream`
+  - `Content-Type`: `application/json`
 
 > [!TIP]
-> **How to Base64 encode credentials (without terminal commands)**:
-> 1. Open browser developer console (`F12` -> Console tab).
+> **How to Base64 encode credentials (in browser)**:
+> 1. Open browser console (`F12` -> Console tab).
 > 2. Execute: `btoa("YOUR_USERNAME:YOUR_PASSWORD")`
-> 3. Copy the resulting encoded string.
+> 3. Copy the resulting string.
 
 ---
 
@@ -89,16 +78,14 @@ Antigravity IDE supports native Streamable HTTP connections directly in `mcp_con
 
 ---
 
-## 🤖 Setup Guide for Claude
+## 🤖 Setup Guide for Claude Desktop App
 
-### Option A: Claude Desktop App (Recommended)
-
-Claude Desktop app configuration file locations:
+Claude Desktop app configuration file location:
 - **Windows (Standard)**: `%APPDATA%\Claude\claude_desktop_config.json`
 - **Windows (MSIX / Store App)**: `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json`
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 
-#### Configuration JSON:
+### Configuration JSON:
 
 ```json
 {
@@ -120,32 +107,6 @@ Claude Desktop app configuration file locations:
 
 ---
 
-### Option B: Claude Code CLI (Single Sign-On)
-
-To connect using Claude Code CLI with SSO:
-
-1. Open terminal and run:
-   ```bash
-   claude mcp add --transport http BTP-Administration \
-     "https://sso.mcp.btp.cloud.sap/mcp" \
-     --client-id e789ba01-5612-47ee-bfe7-79e26411c1ca
-   ```
-2. Start Claude Code: `claude`
-3. Type `/mcp` and select `BTP-Administration`.
-4. Complete SAP login in the browser window (`http://127.0.0.1:*`).
-
----
-
-### Option C: Claude.ai Web Connectors (Compatibility Notes)
-
-> [!WARNING]
-> On `claude.ai` Web Connectors:
-> - **SSO OAuth** fails with `OpenID provider cannot process the request` because SAP blocks `https://claude.ai/api/mcp/auth_callback` redirect URIs.
-> - **Direct Connection** fails if custom headers (`X-Platform-Origin`) require Anthropic domain approval.
-> **Use Claude Desktop App or Antigravity IDE instead.**
-
----
-
 ## 🛠️ Troubleshooting & Technical Notes
 
 | Issue / Error | Cause | Resolution |
@@ -153,7 +114,7 @@ To connect using Claude Code CLI with SSO:
 | `401 Unauthorized` | Missing or invalid `Authorization` header | Verify Base64 string encoding (`username:password`) |
 | `406 Not Acceptable` | Missing stream headers | Include `Accept: application/json, text/event-stream` |
 | `SyntaxError: Unexpected token 'o', "[object Response]"` | `mcp-remote` attempted OAuth DCR | Use native `url` transport instead of `mcp-remote` |
-| `OpenID provider cannot process the request` | Web redirect URI not whitelisted by SAP | Use Direct Connection headers or local CLI loopback |
+| `OpenID provider cannot process the request` | Web redirect URI not whitelisted by SAP | Use Direct Connection headers in desktop config file |
 
 ---
 
