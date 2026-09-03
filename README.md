@@ -14,9 +14,9 @@ A comprehensive, security-first guide for configuring and connecting the **SAP B
 - [🔑 Prerequisites & Authentication Modes](#-prerequisites--authentication-modes)
 - [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
 - [🤖 Setup Guide for Claude](#-setup-guide-for-claude)
-  - [Option A: Claude Desktop App (Windows / macOS)](#option-a-claude-desktop-app-windows--macos)
+  - [Option A: Claude Desktop App (Recommended)](#option-a-claude-desktop-app-recommended)
   - [Option B: Claude Code CLI (Single Sign-On)](#option-b-claude-code-cli-single-sign-on)
-  - [Option C: Claude.ai Web Custom Connectors](#option-c-claudeai-web-custom-connectors)
+  - [Option C: Claude.ai Web Connectors (Compatibility Notes)](#option-c-claudeai-web-connectors-compatibility-notes)
 - [🛠️ Troubleshooting & Technical Notes](#%EF%B8%8F-troubleshooting--technical-notes)
 - [🔐 Security Best Practices](#-security-best-practices)
 
@@ -28,10 +28,10 @@ The **MCP Server for SAP BTP Administration** allows AI agents and assistants to
 
 | Client / Interface | Support Status | Preferred Auth Mode | Transport Type |
 | :--- | :---: | :--- | :--- |
-| **Google Antigravity IDE** | 🟢 Supported | Direct Connection (Headers) | Native `streamableHttp` |
-| **Claude Desktop App** | 🟢 Supported | Direct Connection (Headers) | Native `streamableHttp` |
-| **Claude Code CLI** | 🟢 Supported | Single Sign-On (SSO) | HTTP (`claude mcp add`) |
-| **Claude.ai Web Connectors** | 🟢 Supported | Direct Connection (Headers) | Web Connectors GUI |
+| **Google Antigravity IDE** | 🟢 Fully Active | Direct Connection (Headers) | Native `streamableHttp` |
+| **Claude Desktop App** | 🟢 Fully Active | Direct Connection (Headers) | Native `streamableHttp` |
+| **Claude Code CLI** | 🟡 Optional | Single Sign-On (SSO) | HTTP (`claude mcp add`) |
+| **Claude.ai Web Connectors** | 🔴 Restricted | Direct Connection Only | Web Connectors GUI |
 
 ---
 
@@ -91,7 +91,7 @@ Antigravity IDE supports native Streamable HTTP connections directly in `mcp_con
 
 ## 🤖 Setup Guide for Claude
 
-### Option A: Claude Desktop App (Windows / macOS)
+### Option A: Claude Desktop App (Recommended)
 
 Claude Desktop app configuration file locations:
 - **Windows (Standard)**: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -136,18 +136,13 @@ To connect using Claude Code CLI with SSO:
 
 ---
 
-### Option C: Claude.ai Web Custom Connectors
-
-When adding via Claude Web UI (**Connectors > Add Custom Connector**):
-
-| Setting Field | Configuration Value |
-| :--- | :--- |
-| **Connector Name** | `BTP Administration` |
-| **Server URL** | `https://proxy.c-769d49e.kyma.ondemand.com/mcp` |
-| **Header 1** | `Authorization`: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>` |
+### Option C: Claude.ai Web Connectors (Compatibility Notes)
 
 > [!WARNING]
-> Do NOT select SSO OAuth on `claude.ai` Web Connectors. SAP blocks `https://claude.ai/api/mcp/auth_callback` redirect URIs. Use Direct Connection Basic Authentication instead.
+> On `claude.ai` Web Connectors:
+> - **SSO OAuth** fails with `OpenID provider cannot process the request` because SAP blocks `https://claude.ai/api/mcp/auth_callback` redirect URIs.
+> - **Direct Connection** fails if custom headers (`X-Platform-Origin`) require Anthropic domain approval.
+> **Use Claude Desktop App or Antigravity IDE instead.**
 
 ---
 
