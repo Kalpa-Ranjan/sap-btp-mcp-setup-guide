@@ -5,7 +5,7 @@
 [![SAP BTP](https://img.shields.io/badge/SAP%20BTP-Administration-008FD3?style=for-the-badge&logo=sap&logoColor=white)](https://help.sap.com)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-7057ff?style=for-the-badge&logo=json&logoColor=white)](https://modelcontextprotocol.io)
 
-A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using local configuration files for **Claude Desktop App** and **Google Antigravity IDE** — without requiring CLI commands or web connectors.
+A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using app GUI settings for **Claude Desktop App** and **Google Antigravity IDE** — without requiring CLI commands or web connectors.
 
 ---
 
@@ -21,12 +21,12 @@ A clean, security-first guide for configuring the **SAP BTP Administration MCP (
 
 ## 📖 Architecture Overview
 
-This configuration model operates **100% locally via GUI configuration files**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
+This configuration model operates **100% locally via GUI settings menus**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
 
-| Client / Interface | Configuration File | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
+| Client / Interface | GUI Menu Navigation Path | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
 | :--- | :--- | :--- | :---: | :---: |
-| **Claude Desktop App** | `claude_desktop_config.json` | Direct Connection | ❌ No | ❌ No |
-| **Google Antigravity IDE** | `mcp_config.json` | Direct Connection | ❌ No | ❌ No |
+| **Claude Desktop App** | `Profile ➔ Settings ➔ Developer ➔ Edit Config` | Direct Connection | ❌ No | ❌ No |
+| **Google Antigravity IDE** | `Installed MCP Servers ➔ Open MCP Config` | Direct Connection | ❌ No | ❌ No |
 
 ---
 
@@ -50,21 +50,13 @@ This configuration model operates **100% locally via GUI configuration files**, 
 
 ## 🤖 Setup Guide for Claude Desktop App
 
-Claude Desktop app configuration file locations:
-- **Windows (Standard)**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Windows (MSIX / Store App)**: `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json`
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+### Step-by-Step GUI Process:
 
-> [!NOTE]
-> **Which file to edit?**  
-> You **only need to edit ONE file** depending on how Claude Desktop was installed on your PC:
-> - If installed via **Windows Store / MSIX**, update the `Packages\Claude_*\...` file.
-> - If installed via **Standard EXE**, update the `%APPDATA%\Claude\...` file.
-
-### Step-by-Step Configuration:
-
-1. Open `claude_desktop_config.json` in your file editor.
-2. Add the **BTP Administration** server configuration:
+1. Open **Claude Desktop App**.
+2. Click your **Profile Icon / Avatar** (top left or top right) and select **Settings**.
+3. Go to the **Developer** tab.
+4. Click **Edit Config** (or *Edit MCP Config*). This automatically opens `claude_desktop_config.json` in your text editor.
+5. Add the **BTP Administration** server configuration:
 
 ```json
 {
@@ -82,20 +74,20 @@ Claude Desktop app configuration file locations:
 }
 ```
 
-3. Save the file.
-4. Completely **Quit and Restart Claude Desktop**.
-5. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
+6. Save the file.
+7. Fully **Quit and Restart Claude Desktop**.
+8. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
 
 ---
 
 ## 🚀 Setup Guide for Antigravity IDE
 
-Antigravity IDE supports native Streamable HTTP connections directly in `mcp_config.json`.
+### Step-by-Step GUI Process:
 
-### Step-by-Step Configuration:
-
-1. Click **`Open MCP Config`** at the top right of the Installed MCP Servers panel.
-2. Update your `mcp_config.json` file:
+1. Open **Antigravity IDE**.
+2. In the left/right sidebar panel, expand **Installed MCP Servers**.
+3. Click the **`Open MCP Config`** button (top right of panel).
+4. Update your `mcp_config.json` file:
 
 ```json
 {
@@ -113,8 +105,8 @@ Antigravity IDE supports native Streamable HTTP connections directly in `mcp_con
 }
 ```
 
-3. Save the file and click **Refresh 🔄** in Antigravity.
-4. The server status light will turn **green (`●`)**, enabling BTP Cockpit tools (e.g. `Navigation-buildLink`).
+5. Save the file and click **Refresh 🔄** in Antigravity.
+6. The server status light will turn **green (`●`)**, enabling BTP Cockpit tools (e.g. `Navigation-buildLink`).
 
 ---
 
