@@ -36,11 +36,9 @@ This configuration model operates **100% locally via GUI menus**, connecting you
 
 ### Direct Connection Mode
 * **Endpoint URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
-* **Headers Required**:
+* **Credentials Required**:
   - `Authorization`: `Basic <Base64-encoded username:password>`
-  - `X-Platform-Origin`: `<your-ias-tenant-subdomain>`
-  - `Accept`: `application/json, text/event-stream`
-  - `Content-Type`: `application/json`
+  - `X-Platform-Origin`: `<your-ias-tenant-subdomain>` (when using config JSON)
 
 > [!TIP]
 > **How to Base64 encode credentials (in browser)**:
@@ -62,11 +60,8 @@ You can configure Claude Desktop using either the **Extensions Form GUI** or the
 4. Fill in the fields:
    - **Name**: `BTP Administration`
    - **URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
-   - **Custom Headers / Authentication**:
+   - **Authentication**:
      - `Authorization`: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
-     - `X-Platform-Origin`: `<YOUR_IAS_TENANT_SUBDOMAIN>`
-     - `Accept`: `application/json, text/event-stream`
-     - `Content-Type`: `application/json`
 5. Click **Save / Add**.
 6. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
 
