@@ -13,6 +13,8 @@ A clean, security-first guide for configuring the **SAP BTP Administration MCP (
 - [📖 Architecture Overview](#-architecture-overview)
 - [🔑 Prerequisites & Authentication](#-prerequisites--authentication)
 - [🤖 Setup Guide for Claude Desktop App](#-setup-guide-for-claude-desktop-app)
+  - [Method 1: Extensions Form GUI (UI Setup)](#method-1-extensions-form-gui-ui-setup)
+  - [Method 2: Developer Config File (JSON Setup)](#method-2-developer-config-file-json-setup)
 - [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
 - [🛠️ Troubleshooting & Technical Notes](#%EF%B8%8F-troubleshooting--technical-notes)
 - [🔐 Security Best Practices](#-security-best-practices)
@@ -21,11 +23,11 @@ A clean, security-first guide for configuring the **SAP BTP Administration MCP (
 
 ## 📖 Architecture Overview
 
-This configuration model operates **100% locally via GUI settings menus**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
+This configuration model operates **100% locally via GUI menus**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
 
-| Client / Interface | GUI Menu Navigation Path | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
+| Client / Interface | GUI Navigation Path | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
 | :--- | :--- | :--- | :---: | :---: |
-| **Claude Desktop App** | `Profile ➔ Settings ➔ Developer ➔ Edit Config` | Direct Connection | ❌ No | ❌ No |
+| **Claude Desktop App** | `Profile ➔ Settings ➔ Extensions / Developer` | Direct Connection | ❌ No | ❌ No |
 | **Google Antigravity IDE** | `Installed MCP Servers ➔ Open MCP Config` | Direct Connection | ❌ No | ❌ No |
 
 ---
@@ -50,13 +52,32 @@ This configuration model operates **100% locally via GUI settings menus**, conne
 
 ## 🤖 Setup Guide for Claude Desktop App
 
-### Step-by-Step GUI Process:
+You can configure Claude Desktop using either the **Extensions Form GUI** or the **Developer Config File**.
+
+### Method 1: Extensions Form GUI (UI Setup)
 
 1. Open **Claude Desktop App**.
-2. Click your **Profile Icon / Avatar** (top left or top right) and select **Settings**.
-3. Go to the **Developer** tab.
-4. Click **Edit Config** (or *Edit MCP Config*). This automatically opens `claude_desktop_config.json` in your text editor.
-5. Add the **BTP Administration** server configuration:
+2. Click your **Profile Icon / Avatar** ➔ **Settings**.
+3. Go to **Extensions** (or *Connectors*) and click **Add Custom Extension** (or *Add*).
+4. Fill in the fields:
+   - **Name**: `BTP Administration`
+   - **URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
+   - **Custom Headers / Authentication**:
+     - `Authorization`: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
+     - `X-Platform-Origin`: `<YOUR_IAS_TENANT_SUBDOMAIN>`
+     - `Accept`: `application/json, text/event-stream`
+     - `Content-Type`: `application/json`
+5. Click **Save / Add**.
+6. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
+
+---
+
+### Method 2: Developer Config File (JSON Setup)
+
+1. Open **Claude Desktop App**.
+2. Click your **Profile Icon / Avatar** ➔ **Settings**.
+3. Go to the **Developer** tab and click **Edit Config** (opens `claude_desktop_config.json`).
+4. Add the **BTP Administration** server configuration:
 
 ```json
 {
@@ -74,9 +95,7 @@ This configuration model operates **100% locally via GUI settings menus**, conne
 }
 ```
 
-6. Save the file.
-7. Fully **Quit and Restart Claude Desktop**.
-8. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
+5. Save the file and completely **Quit and Restart Claude Desktop**.
 
 ---
 
@@ -85,7 +104,7 @@ This configuration model operates **100% locally via GUI settings menus**, conne
 ### Step-by-Step GUI Process:
 
 1. Open **Antigravity IDE**.
-2. In the left/right sidebar panel, expand **Installed MCP Servers**.
+2. In the sidebar panel, expand **Installed MCP Servers**.
 3. Click the **`Open MCP Config`** button (top right of panel).
 4. Update your `mcp_config.json` file:
 
@@ -117,7 +136,7 @@ This configuration model operates **100% locally via GUI settings menus**, conne
 | `401 Unauthorized` | Missing or invalid `Authorization` header | Verify Base64 string encoding (`username:password`) |
 | `406 Not Acceptable` | Missing stream headers | Include `Accept: application/json, text/event-stream` |
 | `SyntaxError: Unexpected token 'o', "[object Response]"` | `mcp-remote` attempted OAuth DCR | Use native `url` transport instead of `mcp-remote` |
-| `OpenID provider cannot process the request` | Web redirect URI not whitelisted by SAP | Use Direct Connection headers in desktop config file |
+| `OpenID provider cannot process the request` | Web redirect URI not whitelisted by SAP | Use Direct Connection headers in desktop app |
 
 ---
 
