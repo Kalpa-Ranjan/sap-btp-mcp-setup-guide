@@ -1,19 +1,19 @@
 # ⚡ SAP BTP Administration MCP Server Integration Guide
 
+[![Claude](https://img.shields.io/badge/Client-Claude%20Desktop-D97706?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
+[![Antigravity](https://img.shields.io/badge/Client-Antigravity--IDE-4285F4?style=for-the-badge)](https://cloud.google.com)
 [![SAP BTP](https://img.shields.io/badge/SAP%20BTP-Administration-008FD3?style=for-the-badge&logo=sap&logoColor=white)](https://help.sap.com)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-7057ff?style=for-the-badge&logo=json&logoColor=white)](https://modelcontextprotocol.io)
-[![Antigravity](https://img.shields.io/badge/Client-Antigravity--IDE-4285F4?style=for-the-badge)](https://cloud.google.com)
-[![Claude](https://img.shields.io/badge/Client-Claude%20Desktop-D97706?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
 
-A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using local configuration files for **Antigravity IDE** and **Claude Desktop App** — without requiring CLI commands or web connectors.
+A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using local configuration files for **Claude Desktop App** and **Google Antigravity IDE** — without requiring CLI commands or web connectors.
 
 ---
 
 ## 📌 Table of Contents
 - [📖 Architecture Overview](#-architecture-overview)
 - [🔑 Prerequisites & Authentication](#-prerequisites--authentication)
-- [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
 - [🤖 Setup Guide for Claude Desktop App](#-setup-guide-for-claude-desktop-app)
+- [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
 - [🛠️ Troubleshooting & Technical Notes](#%EF%B8%8F-troubleshooting--technical-notes)
 - [🔐 Security Best Practices](#-security-best-practices)
 
@@ -25,8 +25,8 @@ This configuration model operates **100% locally via GUI configuration files**, 
 
 | Client / Interface | Configuration File | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
 | :--- | :--- | :--- | :---: | :---: |
-| **Google Antigravity IDE** | `mcp_config.json` | Direct Connection | ❌ No | ❌ No |
 | **Claude Desktop App** | `claude_desktop_config.json` | Direct Connection | ❌ No | ❌ No |
+| **Google Antigravity IDE** | `mcp_config.json` | Direct Connection | ❌ No | ❌ No |
 
 ---
 
@@ -45,6 +45,40 @@ This configuration model operates **100% locally via GUI configuration files**, 
 > 1. Open browser console (`F12` -> Console tab).
 > 2. Execute: `btoa("YOUR_USERNAME:YOUR_PASSWORD")`
 > 3. Copy the resulting string.
+
+---
+
+## 🤖 Setup Guide for Claude Desktop App
+
+Claude Desktop app configuration file locations:
+- **Windows (Standard)**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Windows (MSIX / Store App)**: `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+### Step-by-Step Configuration:
+
+1. Open `claude_desktop_config.json` in your file editor.
+2. Add the **BTP Administration** server configuration:
+
+```json
+{
+  "mcpServers": {
+    "BTP Administration": {
+      "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
+      "headers": {
+        "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
+        "X-Platform-Origin": "<YOUR_IAS_TENANT_SUBDOMAIN>",
+        "Accept": "application/json, text/event-stream",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}
+```
+
+3. Save the file.
+4. Completely **Quit and Restart Claude Desktop**.
+5. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
 
 ---
 
@@ -75,35 +109,6 @@ Antigravity IDE supports native Streamable HTTP connections directly in `mcp_con
 
 3. Save the file and click **Refresh 🔄** in Antigravity.
 4. The server status light will turn **green (`●`)**, enabling BTP Cockpit tools (e.g. `Navigation-buildLink`).
-
----
-
-## 🤖 Setup Guide for Claude Desktop App
-
-Claude Desktop app configuration file location:
-- **Windows (Standard)**: `%APPDATA%\Claude\claude_desktop_config.json`
-- **Windows (MSIX / Store App)**: `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json`
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-### Configuration JSON:
-
-```json
-{
-  "mcpServers": {
-    "BTP Administration": {
-      "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
-      "headers": {
-        "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
-        "X-Platform-Origin": "<YOUR_IAS_TENANT_SUBDOMAIN>",
-        "Accept": "application/json, text/event-stream",
-        "Content-Type": "application/json"
-      }
-    }
-  }
-}
-```
-
-*Save the file and completely restart Claude Desktop.*
 
 ---
 
