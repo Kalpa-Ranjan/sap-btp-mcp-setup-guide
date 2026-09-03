@@ -38,7 +38,7 @@ This configuration model operates **100% locally via GUI menus**, connecting you
 * **Endpoint URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
 * **Credentials Required**:
   - `Authorization`: `Basic <Base64-encoded username:password>`
-  - `X-Platform-Origin`: `<your-ias-tenant-subdomain>` (when using config JSON)
+  - `X-Platform-Origin`: `<YOUR_IAS_SUBDOMAIN>` (e.g. `aeu3lcmcy`)
 
 > [!TIP]
 > **How to Base64 encode credentials (in browser)**:
@@ -81,7 +81,7 @@ You can configure Claude Desktop using either the **Extensions Form GUI** or the
       "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
       "headers": {
         "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
-        "X-Platform-Origin": "<YOUR_IAS_TENANT_SUBDOMAIN>",
+        "X-Platform-Origin": "<YOUR_IAS_SUBDOMAIN>",
         "Accept": "application/json, text/event-stream",
         "Content-Type": "application/json"
       }
@@ -110,7 +110,7 @@ You can configure Claude Desktop using either the **Extensions Form GUI** or the
       "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
       "headers": {
         "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
-        "X-Platform-Origin": "<YOUR_IAS_TENANT_SUBDOMAIN>",
+        "X-Platform-Origin": "<YOUR_IAS_SUBDOMAIN>",
         "Accept": "application/json, text/event-stream",
         "Content-Type": "application/json"
       }
