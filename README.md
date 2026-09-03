@@ -55,6 +55,12 @@ Claude Desktop app configuration file locations:
 - **Windows (MSIX / Store App)**: `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude\claude_desktop_config.json`
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 
+> [!NOTE]
+> **Which file to edit?**  
+> You **only need to edit ONE file** depending on how Claude Desktop was installed on your PC:
+> - If installed via **Windows Store / MSIX**, update the `Packages\Claude_*\...` file.
+> - If installed via **Standard EXE**, update the `%APPDATA%\Claude\...` file.
+
 ### Step-by-Step Configuration:
 
 1. Open `claude_desktop_config.json` in your file editor.
