@@ -33,7 +33,7 @@ This configuration connects AI desktop clients directly to the SAP BTP Administr
 ## 🔑 Prerequisites & Authentication
 
 ### 1. Server Endpoint
-* **MCP Proxy Endpoint URL**: `https://<YOUR_BTP_MCP_PROXY_HOST>/mcp`
+* **MCP Proxy Endpoint URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
 
 ### 2. Basic Authentication
 To generate your Base64-encoded credentials:
@@ -56,7 +56,7 @@ Claude Desktop is configured entirely via the **Add Extension** UI option withou
 4. Click the **Add Custom Extension** (or **Add Extension**) button.
 5. Fill out the extension configuration form:
    - **Extension Name**: `BTP Administration`
-   - **URL / Server Endpoint**: `https://<YOUR_BTP_MCP_PROXY_HOST>/mcp`
+   - **URL / Server Endpoint**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
    - **Authentication**:
      - **Header Name**: `Authorization`
      - **Header Value**: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
@@ -83,7 +83,7 @@ Google Antigravity IDE connects using native Streamable HTTP configured in `mcp_
 {
   "mcpServers": {
     "BTP Administration": {
-      "url": "https://<YOUR_BTP_MCP_PROXY_HOST>/mcp",
+      "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
       "headers": {
         "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>"
       }
@@ -112,5 +112,5 @@ Google Antigravity IDE connects using native Streamable HTTP configured in `mcp_
 
 > [!CAUTION]
 > - Never store or commit actual Base64 authorization tokens in public source code or shared files.
-> - Always replace `<YOUR_BASE64_ENCODED_CREDENTIALS>` and `<YOUR_BTP_MCP_PROXY_HOST>` with your actual deployment values locally.
+> - Always replace `<YOUR_BASE64_ENCODED_CREDENTIALS>` with your actual deployment values locally.
 > - Ensure all connections use HTTPS for encrypted transmission.
