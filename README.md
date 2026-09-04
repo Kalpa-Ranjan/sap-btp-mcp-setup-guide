@@ -5,7 +5,7 @@
 [![SAP BTP](https://img.shields.io/badge/SAP%20BTP-Administration-008FD3?style=for-the-badge&logo=sap&logoColor=white)](https://help.sap.com)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Protocol-7057ff?style=for-the-badge&logo=json&logoColor=white)](https://modelcontextprotocol.io)
 
-A clean, security-first guide for configuring the **SAP BTP Administration MCP (Model Context Protocol) Server** directly using app GUI settings for **Claude Desktop App** and **Google Antigravity IDE** — without requiring CLI commands or web connectors.
+A security-first, step-by-step guide for connecting the **SAP BTP Administration MCP (Model Context Protocol) Server** directly to **Claude Desktop App** (via Add Extension GUI) and **Google Antigravity IDE** (via MCP Config).
 
 ---
 
@@ -13,8 +13,6 @@ A clean, security-first guide for configuring the **SAP BTP Administration MCP (
 - [📖 Architecture Overview](#-architecture-overview)
 - [🔑 Prerequisites & Authentication](#-prerequisites--authentication)
 - [🤖 Setup Guide for Claude Desktop App](#-setup-guide-for-claude-desktop-app)
-  - [Method 1: Extensions Form GUI (UI Setup)](#method-1-extensions-form-gui-ui-setup)
-  - [Method 2: Developer Config File (JSON Setup)](#method-2-developer-config-file-json-setup)
 - [🚀 Setup Guide for Antigravity IDE](#-setup-guide-for-antigravity-ide)
 - [🛠️ Troubleshooting & Technical Notes](#%EF%B8%8F-troubleshooting--technical-notes)
 - [🔐 Security Best Practices](#-security-best-practices)
@@ -23,123 +21,96 @@ A clean, security-first guide for configuring the **SAP BTP Administration MCP (
 
 ## 📖 Architecture Overview
 
-This configuration model operates **100% locally via GUI menus**, connecting your AI desktop clients directly to the SAP BTP Administration proxy endpoint without needing terminal CLI tools or Web Connectors.
+This configuration connects AI desktop clients directly to the SAP BTP Administration proxy endpoint using standard Streamable HTTP (SSE) transport with Basic Authentication.
 
-| Client / Interface | GUI Navigation Path | Auth Method | Terminal CLI Needed? | Web Connector Needed? |
-| :--- | :--- | :--- | :---: | :---: |
-| **Claude Desktop App** | `Profile ➔ Settings ➔ Extensions / Developer` | Direct Connection | ❌ No | ❌ No |
-| **Google Antigravity IDE** | `Installed MCP Servers ➔ Open MCP Config` | Direct Connection | ❌ No | ❌ No |
+| Client / Interface | GUI Navigation Path | Configuration Method | Auth Header Required | CLI / Web Connector Needed? |
+| :--- | :--- | :--- | :--- | :---: |
+| **Claude Desktop App** | `Profile ➔ Settings ➔ Extensions ➔ Add Custom Extension` | Add Extension GUI | `Authorization` | ❌ No |
+| **Google Antigravity IDE** | `Installed MCP Servers ➔ Open MCP Config` | `mcp_config.json` | `Authorization` | ❌ No |
 
 ---
 
 ## 🔑 Prerequisites & Authentication
 
-### Direct Connection Mode
-* **Endpoint URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
-* **Credentials Required**:
-  - `Authorization`: `Basic <Base64-encoded username:password>`
-  - `X-Platform-Origin`: `<YOUR_IAS_SUBDOMAIN>` (e.g. `aeu3lcmcy`)
+### 1. Server Endpoint
+* **MCP Proxy Endpoint URL**: `https://<YOUR_BTP_MCP_PROXY_HOST>/mcp`
 
-> [!TIP]
-> **How to Base64 encode credentials (in browser)**:
-> 1. Open browser console (`F12` -> Console tab).
-> 2. Execute: `btoa("YOUR_USERNAME:YOUR_PASSWORD")`
-> 3. Copy the resulting string.
+### 2. Basic Authentication
+To generate your Base64-encoded credentials:
+1. Combine your SAP user/service credentials: `USERNAME:PASSWORD`
+2. Encode in Base64 (e.g. using browser dev console: `btoa("USERNAME:PASSWORD")` or terminal `echo -n "USERNAME:PASSWORD" | base64`)
+3. Format as standard authorization header value:
+   `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
 
 ---
 
 ## 🤖 Setup Guide for Claude Desktop App
 
-You can configure Claude Desktop using either the **Extensions Form GUI** or the **Developer Config File**.
+Claude Desktop is configured entirely via the **Add Extension** UI option without editing any configuration files.
 
-### Method 1: Extensions Form GUI (UI Setup)
+### Step-by-Step Instructions:
 
 1. Open **Claude Desktop App**.
-2. Click your **Profile Icon / Avatar** ➔ **Settings**.
-3. Go to **Extensions** (or *Connectors*) and click **Add Custom Extension** (or *Add*).
-4. Fill in the fields:
-   - **Name**: `BTP Administration`
-   - **URL**: `https://proxy.c-769d49e.kyma.ondemand.com/mcp`
+2. Click your **Profile Icon / Avatar** in the app header ➔ Select **Settings**.
+3. In the Settings menu, navigate to **Extensions**.
+4. Click the **Add Custom Extension** (or **Add Extension**) button.
+5. Fill out the extension configuration form:
+   - **Extension Name**: `BTP Administration`
+   - **URL / Server Endpoint**: `https://<YOUR_BTP_MCP_PROXY_HOST>/mcp`
    - **Authentication**:
-     - `Authorization`: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
-5. Click **Save / Add**.
-6. Open a new chat in Claude Desktop, click the **🔌 (hammer / MCP tools)** icon, and verify `BTP Administration` is active.
+     - **Header Name**: `Authorization`
+     - **Header Value**: `Basic <YOUR_BASE64_ENCODED_CREDENTIALS>`
+6. Click **Add Extension** / **Save**.
+7. Open a new chat session in Claude Desktop, click the **🔌 Tools / MCP** icon, and confirm that `BTP Administration` is connected and active.
 
----
-
-### Method 2: Developer Config File (JSON Setup)
-
-1. Open **Claude Desktop App**.
-2. Click your **Profile Icon / Avatar** ➔ **Settings**.
-3. Go to the **Developer** tab and click **Edit Config** (opens `claude_desktop_config.json`).
-4. Add the **BTP Administration** server configuration:
-
-```json
-{
-  "mcpServers": {
-    "BTP Administration": {
-      "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
-      "headers": {
-        "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
-        "X-Platform-Origin": "<YOUR_IAS_SUBDOMAIN>",
-        "Accept": "application/json, text/event-stream",
-        "Content-Type": "application/json"
-      }
-    }
-  }
-}
-```
-
-5. Save the file and completely **Quit and Restart Claude Desktop**.
+> [!NOTE]
+> No local JSON config files or terminal commands are needed for Claude Desktop.
 
 ---
 
 ## 🚀 Setup Guide for Antigravity IDE
 
-### Step-by-Step GUI Process:
+Google Antigravity IDE connects using native Streamable HTTP configured in `mcp_config.json`.
+
+### Step-by-Step Instructions:
 
 1. Open **Antigravity IDE**.
-2. In the sidebar panel, expand **Installed MCP Servers**.
-3. Click the **`Open MCP Config`** button (top right of panel).
-4. Update your `mcp_config.json` file:
+2. In the sidebar panel, locate **Installed MCP Servers**.
+3. Click **`Open MCP Config`** (top-right icon of the MCP section).
+4. Add the `BTP Administration` entry to `mcpServers`:
 
 ```json
 {
   "mcpServers": {
     "BTP Administration": {
-      "url": "https://proxy.c-769d49e.kyma.ondemand.com/mcp",
+      "url": "https://<YOUR_BTP_MCP_PROXY_HOST>/mcp",
       "headers": {
-        "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>",
-        "X-Platform-Origin": "<YOUR_IAS_SUBDOMAIN>",
-        "Accept": "application/json, text/event-stream",
-        "Content-Type": "application/json"
+        "Authorization": "Basic <YOUR_BASE64_ENCODED_CREDENTIALS>"
       }
     }
   }
 }
 ```
 
-5. Save the file and click **Refresh 🔄** in Antigravity.
-6. The server status light will turn **green (`●`)**, enabling BTP Cockpit tools (e.g. `Navigation-buildLink`).
+5. Save the `mcp_config.json` file.
+6. Click **Refresh 🔄** in the Installed MCP Servers panel.
+7. Verify the status indicator turns **green (`●`)**.
 
 ---
 
 ## 🛠️ Troubleshooting & Technical Notes
 
-| Issue / Error | Cause | Resolution |
+| Symptom / Error | Cause | Resolution |
 | :--- | :--- | :--- |
-| `401 Unauthorized` | Missing or invalid `Authorization` header | Verify Base64 string encoding (`username:password`) |
-| `406 Not Acceptable` | Missing stream headers | Include `Accept: application/json, text/event-stream` |
-| `SyntaxError: Unexpected token 'o', "[object Response]"` | `mcp-remote` attempted OAuth DCR | Use native `url` transport instead of `mcp-remote` |
-| `OpenID provider cannot process the request` | Web redirect URI not whitelisted by SAP | Use Direct Connection headers in desktop app |
+| `401 Unauthorized` | Invalid or missing `Authorization` header | Ensure header format is `Basic <Base64String>` |
+| `OAuth Redirect Failure` | OAuth SSO flow blocked on Web Connectors | Use Direct Desktop connection instead of Web Connectors |
+| Extension connection stays offline | Incorrect server proxy URL | Double-check HTTPS proxy URL `/mcp` endpoint path |
 
 ---
 
 ## 🔐 Security Best Practices
 
 > [!CAUTION]
-> - Never commit real Base64 credentials or passwords into source code or public repositories.
-> - Store credentials in local environment configuration files or secure password managers.
-> - BTP Administration MCP operates with full privileges of your SAP user identity. Restrict trial accounts to separate test emails.
-
----
+> - Never store or commit actual Base64 authorization tokens in public source code or shared files.
+> - Always replace `<YOUR_BASE64_ENCODED_CREDENTIALS>` and `<YOUR_BTP_MCP_PROXY_HOST>` with your actual deployment values locally.
+> - Ensure all connections use HTTPS for encrypted transmission.
